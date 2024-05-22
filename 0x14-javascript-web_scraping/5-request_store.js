@@ -1,21 +1,24 @@
 #!/usr/bin/node
 
-const request = require('request');
 const fs = require('fs');
+const request = require('request');
 
+// Get the URL and file path from the command-line arguments
 const url = process.argv[2];
 const filePath = process.argv[3];
 
-request(url, (err, res, body) => {
-    if (err) {
+// Make a GET request to the URL
+request(url, (error, response, body) => {
+  if (error) {
+    console.error(error);
+  } else {
+    // Write the response body to the file
+    fs.writeFile(filePath, body, 'utf-8', (err) => {
+      if (err) {
         console.error(err);
-    } else {
-        fs.writeFile(filePath, body, 'utf8', (err) => {
-            if (err) {
-                console.error(err);
-            } else {
-                console.log(`Contents of ${url} stored in ${filePath}`);
-            }
-        });
-    }
+      } else {
+        console.log(`File saved: ${filePath}`);
+      }
+    });
+  }
 });
