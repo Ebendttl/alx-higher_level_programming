@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Configures my domain zone so that the subdomain www points to my load-balancer IP (lb-01).
+
