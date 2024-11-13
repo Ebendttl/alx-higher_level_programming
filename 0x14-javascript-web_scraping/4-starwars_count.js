@@ -2,26 +2,43 @@
 
 const request = require('request');
 
-// Get the API URL from the command-line arguments
+if (process.argv.length !== 3) {
+  console.error('Usage: node 4-starwars_count.js <api_url>');
+  process.exit(1);
+}
+
 const apiUrl = process.argv[2];
+const characterId = '18';
 
-// Wedge Antilles character ID
-const wedgeAntillesId = '18';
+let count = 0;
 
-// Make a GET request to the API URL
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error(error);
-  } else {
-    // Parse the response body as JSON
-    const movies = JSON.parse(body).results;
+const fetchFilms = (url) => {
+  request(url, (error, response, body) => {
+    if (error) {
+      console.error(error);
+      process.exit(1);
+    }
 
-    // Filter the movies that have Wedge Antilles as a character
-    const moviesWithWedgeAntilles = movies.filter((movie) => {
-      return movie.characters.includes(`https://swapi-api.alx-tools.com/api/people/${wedgeAntillesId}/`);
+    if (response.statusCode !== 200) {
+      console.error(`Error: ${response.statusCode}`);
+      process.exit(1);
+    }
+
+    const data = JSON.parse(body);
+    data.results.forEach((film) => {
+      film.characters.forEach((character) => {
+        if (character.includes(characterId)) {
+          count += 1;
+        }
+      });
     });
 
-    // Print the count of movies with Wedge Antilles
-    console.log(moviesWithWedgeAntilles.length);
-  }
-});
+    if (data.next) {
+      fetchFilms(data.next);
+    } else {
+      console.log(count);
+    }
+  });
+};
+
+fetchFilms(apiUrl);
