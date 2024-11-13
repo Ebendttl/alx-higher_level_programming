@@ -1,3 +1,3 @@
 #!/bin/bash
-# All in one line
-curl -s -I "$1" | grep -iE '^Allow: .*$' && echo
+# script to display all HTTP methods the server will accept
+curl -sI "$1" | grep "Allow" | cut -d " " -f 2-
