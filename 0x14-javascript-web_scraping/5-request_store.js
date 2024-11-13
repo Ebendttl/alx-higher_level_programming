@@ -3,22 +3,23 @@
 const fs = require('fs');
 const request = require('request');
 
-// Get the URL and file path from the command-line arguments
+if (process.argv.length < 4) {
+  console.error('Usage: ./5-request_store.js <URL> <file>');
+  process.exit(1);
+}
+
 const url = process.argv[2];
 const filePath = process.argv[3];
 
-// Make a GET request to the URL
 request(url, (error, response, body) => {
   if (error) {
-    console.error(error);
-  } else {
-    // Write the response body to the file
-    fs.writeFile(filePath, body, 'utf-8', (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(`File saved: ${filePath}`);
-      }
-    });
+    console.error(`Error: ${error}`);
+    return;
   }
+
+  fs.writeFile(filePath, body, { encoding: 'utf-8' }, (err) => {
+    if (err) {
+      console.error(`Error writing to file: ${err}`);
+    }
+  });
 });
